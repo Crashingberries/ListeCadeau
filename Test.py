@@ -2,11 +2,13 @@ import sqlite3
 connexionDB = sqlite3.connect('ListeCadeau.db')
 curseur = connexionDB.cursor()
 
-commande_sql = """CREATE TABLE emp ( 
-staff_number INTEGER PRIMARY KEY, 
-fname VARCHAR(20), 
-lname VARCHAR(30), 
-gender CHAR(1), 
-joining DATE);"""
+commande_sql = """CREATE TABLE Clients (
+ID INTEGER PRIMARY KEY,
+Nom VARCHAR(40),
+Adresse VARCHAR(120),
+DateDeNaissance DATE,
+DateDeFete DATE);"""
 
-curseur.execute(commande_sql)
+try  curseur.execute(commande_sql)
+
+else
