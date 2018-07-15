@@ -4,19 +4,20 @@ import fonctions
 class App(Tk):
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
+        self.donnees_application = {"nomEnfant":    StringVar()}
         container = Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
-
+        #self.donnees_application["nomEnfant"]="Simon" #BYPASS
         self.frames = {}
         for F in (StartPage, Ajouter, Recherche, ResultatRecherche):
 
             frame = F(container, self)
             self.frames[F] = frame
             frame.grid(row=0, column=0, sticky="nsew")
-
         self.show_frame(StartPage)
+
     def show_frame(self, context):
         frame = self.frames[context]
         frame.tkraise()
@@ -72,9 +73,6 @@ class Recherche(Frame):
     def __init__(self, parent, controller):
         self.controller=controller
         Frame.__init__(self, parent)
-        def callback():
-            for i in fonctions.RechercheClient(var_nomenfant.get()): #Nontype
-                self.ListeGlobale.append(i)
         label = Label(self, text="Rechercher un enfant")
         label.pack(padx=10, pady=10)
 
@@ -84,27 +82,40 @@ class Recherche(Frame):
         ligne_texte1 = Entry(self, textvariable=var_nomenfant, width=30)
         ligne_texte1.pack()
 
-        buttonrecherche = Button(self, text="Rechercher", bg="Orange", fg="black", command=lambda:[callback,controller.show_frame(ResultatRecherche)])
+        buttonrecherche = Button(self, text="Rechercher", bg="Orange", fg="black", command=lambda:[self.controller.donnees_application["nomEnfant"].set(ligne_texte1.get()),controller.show_frame(ResultatRecherche)])
         buttonrecherche.pack()
 
         buttonadd = Button(self, text="Revenir à l'accueil", bg="yellow", fg="black", command=lambda: controller.show_frame(StartPage))
         buttonadd.pack(side=BOTTOM)
+
+class ListeGlobale:
+    def __init__(self):
+        self.ListeGlobale=[]
+        self.TermeRecherche=""
+    def ExecuterRecherche(self, TermeRecherche):
+        self.TermeRecherche=TermeRecherche
+        for i in fonctions.RechercheClient(TermeRecherche): #Nontype
+            self.ListeGlobale.append(i)
+        return self.ListeGlobale
+
 
 class ResultatRecherche(Frame):
     def __init__(self, parent, controller):
         self.controller=controller
         Frame.__init__(self, parent)
         label = Label(self, text="Quel enfant")
-        label.pack(padx=10, pady=10)
+        label.pack(padx=30, pady=30)
 
         champ_label = Label(self, text="Résultat")
         champ_label.pack()
-
-        i=1
+        print(self.controller.donnees_application["nomEnfant"])
+        ListeEnfant=ListeGlobale()
+        ListeEnfant.ListeGlobale=ListeEnfant.ExecuterRecherche(self.controller.donnees_application["nomEnfant"].get())
         listeResultat = Listbox(self)
-        for x in Recherche.ListeGlobale:
-            listeResultat.insert(i, x)
-            i+1
+        i=1
+        for x in ListeEnfant.ListeGlobale:
+            listeResultat.insert(i,x)
+            i=i+1
         listeResultat.pack()
 
 

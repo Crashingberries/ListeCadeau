@@ -50,10 +50,10 @@ def AjoutProduitListe(ClientID,Cup):
     curseur.execute(commande_sql,ajoutListe)
     connexionDB.commit()
 
-def RechercheClient(NomCLient):
+def RechercheClient(NomClient):
     ensembleresultats=[]
     commande_sql=("""SELECT Nom,Adresse,DateDeFete FROM Clients WHERE Nom= ?""")
-    curseur.execute(commande_sql,(NomCLient,))
+    curseur.execute(commande_sql,(NomClient,))
     resultat=curseur.fetchall()
     for ligne in resultat:
         ensembleresultats.append(ligne)
