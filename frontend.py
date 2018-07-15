@@ -1,4 +1,5 @@
 from tkinter import *
+import fonctions
 
 class App(Tk):
     def __init__(self, *args, **kwargs):
@@ -31,11 +32,13 @@ class StartPage(Frame):
 
         buttonadd = Button(self, text="Ajouter un enfant", bg="yellow", fg="black", command=lambda:controller.show_frame(Ajouter))
         buttonadd.pack()
-        buttonsearch = Button(self, text="Trouvé un enfant", bg="orange", fg="black", command=lambda:controller.show_frame(Recherche))
+        buttonsearch = Button(self, text="Rechercher un enfant", bg="orange", fg="black", command=lambda:controller.show_frame(Recherche))
         buttonsearch.pack()
 
 class Ajouter(Frame):
     def __init__(self, parent, controller):
+        def callback():
+            fonctions.AjoutClient(var_nomEnfant.get(),var_dateDeFete.get(),var_adresse.get())
         Frame.__init__(self, parent)
 
         label = Label(self, text="Ajouter un enfant")
@@ -43,23 +46,23 @@ class Ajouter(Frame):
 
         champ_label = Label(self, text="Nom de l'enfant")
         champ_label.pack()
-        var_nomenfant = StringVar()
-        ligne_texte1 = Entry(self, textvariable=var_nomenfant, width=30)
+        var_nomEnfant = StringVar()
+        ligne_texte1 = Entry(self, textvariable=var_nomEnfant, width=30)
         ligne_texte1.pack()
 
         champ_label2 = Label(self, text="Date de fête")
         champ_label2.pack()
-        var_nomenfant = StringVar()
-        ligne_texte2 = Entry(self, textvariable=var_nomenfant, width=30)
+        var_dateDeFete = StringVar()
+        ligne_texte2 = Entry(self, textvariable=var_dateDeFete, width=30)
         ligne_texte2.pack()
 
         champ_label3 = Label(self, text="Adresse")
         champ_label3.pack()
-        var_nomenfant = StringVar()
-        ligne_texte3 = Entry(self, textvariable=var_nomenfant, width=30)
+        var_adresse = StringVar()
+        ligne_texte3 = Entry(self, textvariable=var_adresse, width=30)
         ligne_texte3.pack()
 
-        buttonsummit = Button(self, text="Enregistrer", bg="Orange", fg="black",)
+        buttonsummit = Button(self, text="Enregistrer", bg="Orange", fg="black",command=callback)
         buttonsummit.pack()
 
         buttonadd = Button(self, text="Revenir à l'accueil", bg="yellow", fg="black", command=lambda:controller.show_frame(StartPage))
