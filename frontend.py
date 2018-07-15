@@ -4,15 +4,13 @@ import fonctions
 class App(Tk):
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
-
         container = Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-
-        for F in (StartPage, Ajouter, Recherche):
+        for F in (StartPage, Ajouter, Recherche, ResultatRecherche):
 
             frame = F(container, self)
             self.frames[F] = frame
@@ -25,6 +23,7 @@ class App(Tk):
 
 class StartPage(Frame):
     def __init__(self, parent, controller):
+        self.controller=controller
         Frame.__init__(self, parent)
 
         label = Label(self, text="Accueil")
@@ -37,6 +36,7 @@ class StartPage(Frame):
 
 class Ajouter(Frame):
     def __init__(self, parent, controller):
+        self.controller=controller
         def callback():
             fonctions.AjoutClient(var_nomEnfant.get(),var_dateDeFete.get(),var_adresse.get())
         Frame.__init__(self, parent)
@@ -68,11 +68,13 @@ class Ajouter(Frame):
         buttonadd = Button(self, text="Revenir à l'accueil", bg="yellow", fg="black", command=lambda:controller.show_frame(StartPage))
         buttonadd.pack(side=BOTTOM)
 
-
 class Recherche(Frame):
     def __init__(self, parent, controller):
+        self.controller=controller
         Frame.__init__(self, parent)
-
+        def callback():
+            for i in fonctions.RechercheClient(var_nomenfant.get()): #Nontype
+                self.ListeGlobale.append(i)
         label = Label(self, text="Rechercher un enfant")
         label.pack(padx=10, pady=10)
 
@@ -82,8 +84,32 @@ class Recherche(Frame):
         ligne_texte1 = Entry(self, textvariable=var_nomenfant, width=30)
         ligne_texte1.pack()
 
-        buttonrecherche = Button(self, text="Rechercher", bg="Orange", fg="black", )
+        buttonrecherche = Button(self, text="Rechercher", bg="Orange", fg="black", command=lambda:[callback,controller.show_frame(ResultatRecherche)])
         buttonrecherche.pack()
+
+        buttonadd = Button(self, text="Revenir à l'accueil", bg="yellow", fg="black", command=lambda: controller.show_frame(StartPage))
+        buttonadd.pack(side=BOTTOM)
+
+class ResultatRecherche(Frame):
+    def __init__(self, parent, controller):
+        self.controller=controller
+        Frame.__init__(self, parent)
+        label = Label(self, text="Quel enfant")
+        label.pack(padx=10, pady=10)
+
+        champ_label = Label(self, text="Résultat")
+        champ_label.pack()
+
+        i=1
+        listeResultat = Listbox(self)
+        for x in Recherche.ListeGlobale:
+            listeResultat.insert(i, x)
+            i+1
+        listeResultat.pack()
+
+
+        buttonprofil = Button(self, text="Aller au profil", bg="Orange", fg="black", command=lambda:controller.show_frame(StartPage))
+        buttonprofil.pack()
 
         buttonadd = Button(self, text="Revenir à l'accueil", bg="yellow", fg="black", command=lambda: controller.show_frame(StartPage))
         buttonadd.pack(side=BOTTOM)

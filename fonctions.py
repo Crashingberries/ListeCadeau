@@ -25,7 +25,7 @@ def CreationTableProduitListe():
 	`Achete`	BOOLEAN,
 	PRIMARY KEY(`EntreeNo`),
 	FOREIGN KEY(`ClientID`) REFERENCES `Clients`(`ID`));"""
-    
+
     try:
         curseur.execute(commande_sql)
     except sqlite3.OperationalError:
@@ -49,10 +49,16 @@ def AjoutProduitListe(ClientID,Cup):
     ajoutListe=(ClientID,Cup,produitAjout[0],produitAjout[1],0)
     curseur.execute(commande_sql,ajoutListe)
     connexionDB.commit()
-    
+
+def RechercheClient(NomCLient):
+    ensembleresultats=[]
+    commande_sql=("""SELECT Nom,Adresse,DateDeFete FROM Clients WHERE Nom= ?""")
+    curseur.execute(commande_sql,(NomCLient,))
+    resultat=curseur.fetchall()
+    for ligne in resultat:
+        ensembleresultats.append(ligne)
+    return (ensembleresultats)
+
 
 CreationTableClient()
 CreationTableProduitListe()
-
-#AjoutClient("Simon","321 police","23/09/18")
-AjoutProduitListe(1,"4005556240456")
