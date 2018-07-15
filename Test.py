@@ -1,4 +1,3 @@
-
 import sqlite3
 
 connexionDB = sqlite3.connect('ListeCadeau.db')
@@ -16,8 +15,8 @@ def CreationTableClient():
     except sqlite3.OperationalError:
         pass
 
-def CreationTableProduit():
-    commande_sql = """CREATE TABLE `Produits` (
+def CreationTableProduitListe():
+    commande_sql = """CREATE TABLE `ProduitsListe` (
 	`EntreeNo`	INTEGER NOT NULL,
 	`ClientID`	INTEGER NOT NULL,
 	`CUP`	INTEGER,
@@ -36,10 +35,24 @@ def AjoutClient( nom,adresse,date):
     commande_sql ="""INSERT INTO Clients(Nom,Adresse,DateDeFete)
     VALUES (?,?,?);"""
     client= (nom,adresse,date)
-    curseur.execute(commande_sql,client)
+    curseur.execute(commande_sql,(client))
     connexionDB.commit()
 
-#def AjoutProduit(Client):
+def AjoutProduitListe(ClientID,Cup):
+    commande_sql= ("""SELECT FC_Title_Short,Price FROM EnsembleProduit WHERE EAN = (?);""")
+    curseur.execute(commande_sql,(Cup,))
+    details=curseur.fetchall()
+    for info in details:
+        produitAjout=info
+    commande_sql ="""INSERT INTO ProduitsListe(ClientID,CUP,NomProduit,Prix,Achete)
+    VALUES (?,?,?,?,?);"""
+    ajoutListe=(ClientID,Cup,produitAjout[0],produitAjout[1],0)
+    curseur.execute(commande_sql,ajoutListe)
+    connexionDB.commit()
+    
 
 CreationTableClient()
-CreationTableProduit()
+CreationTableProduitListe()
+
+#AjoutClient("Simon","321 police","23/09/18")
+AjoutProduitListe(1,"4005556240456")
