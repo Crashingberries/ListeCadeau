@@ -1,141 +1,146 @@
 from tkinter import *
 import fonctions
 
-class App(Tk):
-    def __init__(self, *args, **kwargs):
-        Tk.__init__(self, *args, **kwargs)
-        self.donnees_application = {"nomEnfant":    StringVar()}
-        container = Frame(self)
-        container.pack(side="top", fill="both", expand=True)
-        container.grid_rowconfigure(0, weight=1)
-        container.grid_columnconfigure(0, weight=1)
-        #self.donnees_application["nomEnfant"]="Simon" #BYPASS
-        self.frames = {}
-        for F in (StartPage, Ajouter, Recherche, ResultatRecherche):
 
-            frame = F(container, self)
-            self.frames[F] = frame
-            frame.grid(row=0, column=0, sticky="nsew")
-        self.show_frame(StartPage)
+def raise_frame(frame):
+    frame.tkraise()
 
-    def show_frame(self, context):
-        frame = self.frames[context]
-        frame.tkraise()
-
-class StartPage(Frame):
-    def __init__(self, parent, controller):
-        self.controller=controller
-        Frame.__init__(self, parent)
-
-        label = Label(self, text="Accueil")
-        label.pack(padx=10, pady=10)
-
-        buttonadd = Button(self, text="Ajouter un enfant", bg="yellow", fg="black", command=lambda:controller.show_frame(Ajouter))
-        buttonadd.pack()
-        buttonsearch = Button(self, text="Rechercher un enfant", bg="orange", fg="black", command=lambda:controller.show_frame(Recherche))
-        buttonsearch.pack()
-
-class Ajouter(Frame):
-    def __init__(self, parent, controller):
-        self.controller=controller
-        def callback():
-            fonctions.AjoutClient(var_nomEnfant.get(),var_dateDeFete.get(),var_adresse.get())
-        Frame.__init__(self, parent)
-
-        label = Label(self, text="Ajouter un enfant")
-        label.pack(padx=10, pady=10)
-
-        champ_label = Label(self, text="Nom de l'enfant")
-        champ_label.pack()
-        var_nomEnfant = StringVar()
-        ligne_texte1 = Entry(self, textvariable=var_nomEnfant, width=30)
-        ligne_texte1.pack()
-
-        champ_label2 = Label(self, text="Date de fête")
-        champ_label2.pack()
-        var_dateDeFete = StringVar()
-        ligne_texte2 = Entry(self, textvariable=var_dateDeFete, width=30)
-        ligne_texte2.pack()
-
-        champ_label3 = Label(self, text="Adresse")
-        champ_label3.pack()
-        var_adresse = StringVar()
-        ligne_texte3 = Entry(self, textvariable=var_adresse, width=30)
-        ligne_texte3.pack()
-
-        buttonsummit = Button(self, text="Enregistrer", bg="Orange", fg="black",command=callback)
-        buttonsummit.pack()
-
-        buttonadd = Button(self, text="Revenir à l'accueil", bg="yellow", fg="black", command=lambda:controller.show_frame(StartPage))
-        buttonadd.pack(side=BOTTOM)
-
-class Recherche(Frame):
-    def __init__(self, parent, controller):
-        self.controller=controller
-        Frame.__init__(self, parent)
-        label = Label(self, text="Rechercher un enfant")
-        label.pack(padx=10, pady=10)
-
-        champ_label = Label(self, text="Nom de l'enfant")
-        champ_label.pack()
-        var_nomenfant = StringVar()
-        ligne_texte1 = Entry(self, textvariable=var_nomenfant, width=30)
-        ligne_texte1.pack()
-
-        buttonrecherche = Button(self, text="Rechercher", bg="Orange", fg="black", command=lambda:[self.controller.donnees_application["nomEnfant"].set(ligne_texte1.get()),controller.show_frame(ResultatRecherche)])
-        buttonrecherche.pack()
-
-        buttonadd = Button(self, text="Revenir à l'accueil", bg="yellow", fg="black", command=lambda: controller.show_frame(StartPage))
-        buttonadd.pack(side=BOTTOM)
-
-class ListeGlobale:
-    def __init__(self):
-        self.ListeGlobale=[]
-        self.TermeRecherche=""
-    def ExecuterRecherche(self, TermeRecherche):
-        self.TermeRecherche=TermeRecherche
-        for i in fonctions.RechercheClient(TermeRecherche): #Nontype
-            self.ListeGlobale.append(i)
-        return self.ListeGlobale
+def AEnfant():
+    fonctions.AjoutClient(var_nomEnfant.get(), var_dateDeFete.get(), var_adresse.get())
 
 
-class ResultatRecherche(Frame):
-    def __init__(self, parent, controller):
-        self.controller=controller
-        Frame.__init__(self, parent)
-        label = Label(self, text="Quel enfant")
-        label.pack(padx=30, pady=30)
+def Update():
+    root.after(1)
 
-        champ_label = Label(self, text="Résultat")
-        champ_label.pack()
-        print(self.controller.donnees_application["nomEnfant"])
-        ListeEnfant=ListeGlobale()
-        ListeEnfant.ListeGlobale=ListeEnfant.ExecuterRecherche(self.controller.donnees_application["nomEnfant"].get())
-        listeResultat = Listbox(self)
-        i=1
-        for x in ListeEnfant.ListeGlobale:
-            listeResultat.insert(i,x)
+def ExecuterRechercheClient(TermeRecherche,Liste):
+        Liste.delete(0,END)
+        i=0
+        for x in fonctions.RechercheClient(TermeRecherche): #Nontype
+            Liste.insert(i, x)
             i=i+1
-        listeResultat.pack()
+        Liste.pack()
+
+def ExecuterRechercheProduit(ClientSelectionne,Liste):
+        Liste.delete(0,END)
+        Selection=ClientSelectionne.get(ClientSelectionne.curselection())
+        LabelNomProfil.set(Selection[1])
+        LabelDateProfil.set(Selection[2])
+        LabelAdresseProfil.set(Selection[3])
+        i=0
+        for x in fonctions.RechercheListe(Selection[0]): #Nontype
+            Liste.insert(i, x)
+            i=i+1
+        Liste.pack()
+
+root = Tk()
+root.title("Liste Cadeaux")
+photo = PhotoImage(file='logo.png')
+addkid = PhotoImage(file='addkid.png')
+look = PhotoImage(file='look.png')
+
+StartPage = Frame(root)
+Ajouter = Frame(root)
+Recherche = Frame(root)
+ResultatRecherche = Frame(root)
+ProfilEnfant = Frame(root)
+ModifProfil = Frame(root)
+AboutPage = Frame(root)
+
+for frame in (StartPage, Ajouter, Recherche, ResultatRecherche, ProfilEnfant, ModifProfil, AboutPage):
+    frame.grid(row=0, column=0, sticky='news')
+
+#StartPage
+Label(StartPage, text="Accueil", font='Courier 25 bold').pack()
+Button(StartPage, image=addkid, bg="Orange", command=lambda:raise_frame(Ajouter)).pack()
+Button(StartPage, image=look, bg="yellow", command=lambda:raise_frame(Recherche)).pack()
+Button(StartPage, image=photo, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
+
+#Ajouter
+Label(Ajouter, text='Ajouter un enfant', font='Courier 25 bold').pack()
+
+Label(Ajouter, text="Nom de l'enfant").pack()
+var_nomEnfant = StringVar()
+Entry(Ajouter, textvariable=var_nomEnfant, width=30).pack()
+
+Label(Ajouter, text="Date de fête").pack()
+var_dateDeFete = StringVar()
+Entry(Ajouter, textvariable=var_dateDeFete, width=30).pack()
+
+Label(Ajouter, text="Adresse").pack()
+var_adresse = StringVar()
+Entry(Ajouter, textvariable=var_adresse, width=30).pack()
+
+Button(Ajouter, text="Enregistrer", font='Courier 12 bold', bg="Orange", fg="black", command=AEnfant).pack()
+Button(Ajouter, image=photo, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
 
 
-        buttonprofil = Button(self, text="Aller au profil", bg="Orange", fg="black", command=lambda:controller.show_frame(StartPage))
-        buttonprofil.pack()
+#Recherche
+Label(Recherche, text="Rechercher un enfant", font='Courier 25 bold').pack()
 
-        buttonadd = Button(self, text="Revenir à l'accueil", bg="yellow", fg="black", command=lambda: controller.show_frame(StartPage))
-        buttonadd.pack(side=BOTTOM)
+Label(Recherche, text="Nom de l'enfant").pack()
+var_nomEnfantRecherche= StringVar()
+listeResultatRechercheEnfant = Listbox(ResultatRecherche)
+LabelAdresseProfil=StringVar()
+LabelDateProfil=StringVar()
+LabelNomProfil=StringVar()
+Entry(Recherche, textvariable=var_nomEnfantRecherche, width=30).pack()
+Button(Recherche, text="Rechercher", bg="Orange", fg="black", command=lambda:[ExecuterRechercheClient(var_nomEnfantRecherche.get(),listeResultatRechercheEnfant),raise_frame(ResultatRecherche),Update()]).pack()
 
-App = App()
-App.title("Liste Cadeaux")
-App.geometry('1000x800+450+100')
+Button(Recherche, image=photo, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
 
-menu = Menu(App)
-App.config(menu=menu)
+
+#ResultatRecherche
+
+Label(ResultatRecherche, text="Quel enfant", font='Courier 25 bold').pack()
+Label(ResultatRecherche, text="Résultat").pack()
+ListeCadeaux = Listbox(ProfilEnfant)
+Button(ResultatRecherche, text="Aller au profil", bg="Orange", fg="black", command=lambda:[ExecuterRechercheProduit(listeResultatRechercheEnfant,ListeCadeaux),Update(),raise_frame(ProfilEnfant)]).pack()
+Button(ResultatRecherche, image=photo, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
+
+
+#ProfilEnfant
+Label(ProfilEnfant, text="Profil Enfant", font='Courier 25 bold').pack()
+Label(ProfilEnfant, textvariable=LabelNomProfil).pack()
+Label(ProfilEnfant, textvariable=LabelDateProfil).pack()
+Label(ProfilEnfant, textvariable=LabelAdresseProfil).pack()
+
+ListeCadeaux.pack()
+
+Button(ProfilEnfant, text="Modifier le profil", bg="Orange", fg="black", command=lambda:raise_frame(ModifProfil)).pack()
+Button(ProfilEnfant, image=photo, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
+
+
+#ModifProfil
+Label(ModifProfil, text="Profil Enfant", font='Courier 25 bold').pack()
+Label(ModifProfil, text="Nom").pack()
+var_nomEnfantModif = StringVar()
+Entry(ModifProfil, textvariable=var_nomEnfantModif, width=30).pack()
+Label(ModifProfil, text="Date").pack()
+var_dateDeFeteModif = StringVar()
+Entry(ModifProfil, textvariable=var_dateDeFeteModif, width=30).pack()
+Label(ModifProfil, text="Adresse").pack()
+var_adresseModif = StringVar()
+Entry(ModifProfil, textvariable=var_adresseModif, width=30).pack()
+
+Button(ModifProfil, text="Enregistrer", bg="Orange", fg="black", command=lambda:raise_frame(ProfilEnfant)).pack()
+
+
+#Menu
+menu = Menu(root)
+root.config(menu=menu)
 filemenu = Menu(menu)
 menu.add_cascade(label='Menu', menu=filemenu)
-filemenu.add_command(label='Exit', command=App.quit)
+filemenu.add_command(label='Exit', command=root.quit)
 helpmenu = Menu(menu)
 menu.add_cascade(label='Aide', menu=helpmenu)
-helpmenu.add_command(label='About')
+helpmenu.add_command(label='About', command=lambda:raise_frame(AboutPage))
 
-App.mainloop()
+
+#AboutPage
+Label(AboutPage, text="Crédit & Copyright By Alex Thibeault et Simon Lafortune").pack()
+Button(AboutPage, image=photo, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
+
+raise_frame(StartPage)
+
+root.after(1000, Update)
+root.mainloop()

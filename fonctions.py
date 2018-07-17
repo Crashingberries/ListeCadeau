@@ -52,12 +52,21 @@ def AjoutProduitListe(ClientID,Cup):
 
 def RechercheClient(NomClient):
     ensembleresultats=[]
-    commande_sql=("""SELECT Nom,Adresse,DateDeFete FROM Clients WHERE Nom= ?""")
+    commande_sql=("""SELECT Id,Nom,Adresse,DateDeFete FROM Clients WHERE Nom= ?""")
     curseur.execute(commande_sql,(NomClient,))
     resultat=curseur.fetchall()
     for ligne in resultat:
-        ensembleresultats.append(ligne)
-    return (ensembleresultats)
+       ensembleresultats.append(ligne)
+    return (resultat)
+
+def RechercheListe(IdClient):
+    ensembleresultats=[]
+    commande_sql=("""SELECT CUP,NomProduit,Prix FROM ProduitsListe WHERE ClientID= ?""")
+    curseur.execute(commande_sql,(IdClient,))
+    resultat=curseur.fetchall()
+    for ligne in resultat:
+       ensembleresultats.append(ligne)
+    return (resultat)
 
 
 CreationTableClient()
