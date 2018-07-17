@@ -69,7 +69,7 @@ def RechercheListe(IdClient):
     return (resultat)
 
 def ModifierClient(InfoClient,NouvellesInformations):
-    commande_sql=("""UPDATE Clients SET Nom=?,Adresse=?,DateDeFete=? WHERE ClientID= ?""")
+    commande_sql=("""UPDATE Clients SET Nom=?,Adresse=?,DateDeFete=? WHERE ID= ?""")
     curseur.execute(commande_sql,(NouvellesInformations[0],NouvellesInformations[1],NouvellesInformations[2],InfoClient[0],))
     connexionDB.commit()
 

@@ -1,7 +1,6 @@
 from tkinter import *
 import fonctions
 
-
 def raise_frame(frame):
     frame.tkraise()
 
@@ -16,21 +15,31 @@ def ExecuterRechercheClient(TermeRecherche,Liste):
             i=i+1
         Liste.pack()
 
-def ExecuterRechercheProduit(ClientSelectionne,Liste,Enregistrement):
+def ExecuterRechercheProduit(ClientSelectionne,Liste):
         Liste.delete(0,END)
-        Enregistrement=ClientSelectionne.get(ClientSelectionne.curselection())
-        LabelNomProfil.set(Enregistrement[1])
-        LabelDateProfil.set(Enregistrement[2])
-        LabelAdresseProfil.set(Enregistrement[3])
+        Temp=ClientSelectionne.get(ClientSelectionne.curselection())
+        ProfilEnfantSelectionne.insert(1,Temp[1])
+        ProfilEnfantSelectionne.insert(2,Temp[2])
+        ProfilEnfantSelectionne.insert(3,Temp[3])
+        ProfilEnfantSelectionne.insert(0,Temp[0])
+        LabelNomProfil.set(Temp[1])
+        LabelDateProfil.set(Temp[2])
+        LabelAdresseProfil.set(Temp[3])
         i=0
-        for x in fonctions.RechercheListe(Enregistrement[0]): #Nontype
+        for x in fonctions.RechercheListe(Temp[0]): #Nontype
             Liste.insert(i, x)
             i=i+1
         Liste.pack()
 
 def ModifierProfilEnfant(Nom,Date,Adresse,Enregistrement):
     Modification=[Nom,Date,Adresse]
-    fonctions.ModifierClient(Modification,Enregistrement)
+    fonctions.ModifierClient(Enregistrement.get(0,END), Modification)
+    LabelNomProfil.set(Modification[0])
+    LabelDateProfil.set(Modification[1])
+    LabelAdresseProfil.set(Modification[2])
+
+#def AddCadeaux():
+
 
 root = Tk()
 root.title("Liste Cadeaux")
@@ -95,7 +104,8 @@ Button(Recherche, image=photo, command=lambda:raise_frame(StartPage)).pack(side=
 Label(ResultatRecherche, text="Quel enfant", font='Courier 25 bold').pack()
 Label(ResultatRecherche, text="Résultat").pack()
 ListeCadeaux = Listbox(ProfilEnfant)
-Button(ResultatRecherche, text="Aller au profil", bg="Orange", fg="black", command=lambda:[ExecuterRechercheProduit(listeResultatRechercheEnfant,ListeCadeaux,EnregistrementClient),raise_frame(ProfilEnfant)]).pack()
+ProfilEnfantSelectionne=Listbox()
+Button(ResultatRecherche, text="Aller au profil", bg="Orange", fg="black", command=lambda:[ExecuterRechercheProduit(listeResultatRechercheEnfant,ListeCadeaux),raise_frame(ProfilEnfant)]).pack()
 Button(ResultatRecherche, image=photo, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
 
 
@@ -109,7 +119,6 @@ ListeCadeaux.pack()
 
 Button(ProfilEnfant, text="Modifier le profil", bg="Orange", fg="black", command=lambda:raise_frame(ModifProfil)).pack()
 Button(ProfilEnfant, image=photo, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
-Button(ProfilEnfant, text="Modifier la liste de produits", bg="Orange", fg="black").pack()
 
 
 
@@ -125,8 +134,10 @@ Label(ModifProfil, text="Adresse").pack()
 var_adresseModif = StringVar(value=LabelAdresseProfil.get())
 Entry(ModifProfil, textvariable=var_adresseModif, width=30).pack()
 
-Button(ModifProfil, text="Enregistrer", bg="Orange", fg="black", command=lambda:[ModifierProfilEnfant(var_nomEnfantModif.get(),var_dateDeFeteModif.get(),var_adresseModif.get(),EnregistrementClient),raise_frame(ProfilEnfant)]).pack()
+Button(ModifProfil, text="Enregistrer", bg="Orange", fg="black", command=lambda:[ModifierProfilEnfant(var_nomEnfantModif.get(),var_dateDeFeteModif.get(),var_adresseModif.get(),ProfilEnfantSelectionne),raise_frame(ProfilEnfant)]).pack()
 Button(ModifProfil, text="Retour", bg="Yellow", fg="black", command=lambda:raise_frame(ProfilEnfant)).pack()
+#ButtonCadeaux = Button(ModifProfil, text="Ajouter Cadeaux", bg="Orange", fg="black").pack()
+#ButtonCadeaux.bind("<Return>", AddCadeaux)
 
 #Menu
 menu = Menu(root)
