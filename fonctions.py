@@ -1,4 +1,5 @@
 import sqlite3
+from tkinter import *
 
 connexionDB = sqlite3.connect('ListeCadeau.db')
 curseur = connexionDB.cursor()
@@ -39,15 +40,19 @@ def AjoutClient( nom,adresse,date):
     connexionDB.commit()
 
 def AjoutProduitListe(ClientID,Cup):
-    commande_sql= ("""SELECT FC_Title_Short,Price FROM EnsembleProduit WHERE EAN = (?);""")
+    produitAjout=[]
+    commande_sql= ("""SELECT FC_Title_Short FROM EnsembleProduit WHERE EAN = (?);""")
     curseur.execute(commande_sql,(Cup,))
-    details=curseur.fetchall()
-    for info in details:
-        produitAjout=info
+    produitAjout.append(curseur.fetchall())
+    commande_sql= ("""SELECT Price FROM EnsembleProduit WHERE EAN = (?);""")
+    curseur.execute(commande_sql,(Cup,))
+    produitAjout.append(curseur.fetchall())
     commande_sql ="""INSERT INTO ProduitsListe(ClientID,CUP,NomProduit,Prix,Achete)
     VALUES (?,?,?,?,?);"""
-    ajoutListe=(ClientID,Cup,produitAjout[0],produitAjout[1],0)
-    curseur.execute(commande_sql,ajoutListe)
+    print(produitAjout[0])
+    print(produitAjout[1])
+    print(produitAjout)
+    curseur.execute(commande_sql,(ClientID[0],Cup,str(produitAjout[0]),str(produitAjout[1]),0))
     connexionDB.commit()
 
 def RechercheClient(NomClient):
