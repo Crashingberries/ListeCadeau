@@ -44,16 +44,16 @@ def AjoutProduitListe(ClientID,Cup):
     commande_sql= ("""SELECT FC_Title_Short FROM EnsembleProduit WHERE EAN = (?);""")
     curseur.execute(commande_sql,(Cup,))
     produitAjout.append(curseur.fetchall())
-    commande_sql= ("""SELECT Price FROM EnsembleProduit WHERE EAN = (?);""")
-    curseur.execute(commande_sql,(Cup,))
-    produitAjout.append(curseur.fetchall())
-    commande_sql ="""INSERT INTO ProduitsListe(ClientID,CUP,NomProduit,Prix,Achete)
-    VALUES (?,?,?,?,?);"""
-    print(produitAjout[0])
-    print(produitAjout[1])
-    print(produitAjout)
-    curseur.execute(commande_sql,(ClientID[0],Cup,str(produitAjout[0]),str(produitAjout[1]),0))
-    connexionDB.commit()
+    if(produitAjout[0]==[]):
+        return "Le code de produit entrée est invalide!"
+    else:
+        commande_sql= ("""SELECT Price FROM EnsembleProduit WHERE EAN = (?);""")
+        curseur.execute(commande_sql,(Cup,))
+        produitAjout.append(curseur.fetchall())
+        commande_sql ="""INSERT INTO ProduitsListe(ClientID,CUP,NomProduit,Prix,Achete)
+        VALUES (?,?,?,?,?);"""
+        curseur.execute(commande_sql,(str(ClientID),Cup,str(produitAjout[0]),str(produitAjout[1]),0))
+        connexionDB.commit()
 
 def RechercheClient(NomClient):
     ensembleresultats=[]
@@ -70,13 +70,20 @@ def RechercheListe(IdClient):
     curseur.execute(commande_sql,(IdClient,))
     resultat=curseur.fetchall()
     for ligne in resultat:
-       ensembleresultats.append(ligne)
+        #test= [tuple(s if type(s)!=int or s!="(" or s!=")" or s!="'" or s!="[" or s!="]"  else "" for s in tup) for tup in ligne]
+        ensembleresultats.append(ligne)
     return (resultat)
 
 def ModifierClient(InfoClient,NouvellesInformations):
     commande_sql=("""UPDATE Clients SET Nom=?,Adresse=?,DateDeFete=? WHERE ID= ?""")
     curseur.execute(commande_sql,(NouvellesInformations[0],NouvellesInformations[1],NouvellesInformations[2],InfoClient[0],))
     connexionDB.commit()
+
+def EffacerProduitListe(IdClient,CupProduitAEffacer):
+    commande_sql=("""DELETE FROM ProduitsListe WHERE ClientID= ? AND CUP=? AND Achete=0""")
+    curseur.execute(commande_sql,(IdClient,CupProduitAEffacer,))
+    connexionDB.commit()
+
 
 
 CreationTableClient()
