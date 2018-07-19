@@ -52,7 +52,7 @@ def AjoutProduitListe(ClientID,Cup):
         produitAjout.append(curseur.fetchall())
         commande_sql ="""INSERT INTO ProduitsListe(ClientID,CUP,NomProduit,Prix,Achete)
         VALUES (?,?,?,?,?);"""
-        curseur.execute(commande_sql,(str(ClientID),Cup,str(produitAjout[0]),str(produitAjout[1]),0))
+        curseur.execute(commande_sql,(ClientID,Cup,produitAjout[0],produitAjout[1],0))
         connexionDB.commit()
 
 def RechercheClient(NomClient):
@@ -60,18 +60,32 @@ def RechercheClient(NomClient):
     commande_sql=("""SELECT Id,Nom,Adresse,DateDeFete FROM Clients WHERE Nom= ?""")
     curseur.execute(commande_sql,(NomClient,))
     resultat=curseur.fetchall()
-    for ligne in resultat:
-       ensembleresultats.append(ligne)
-    return (resultat)
+    print(type(resultat))
+    listeCaractereNonDesire=["{","}","[","]","(",")"]
+    for x in listeCaractereNonDesire:
+        for y in range(resultat.count(x)):
+            resultat.remove(x)
+    print (resultat)
+    return resultat
 
 def RechercheListe(IdClient):
     ensembleresultats=[]
-    commande_sql=("""SELECT CUP,NomProduit,Prix FROM ProduitsListe WHERE ClientID= ?""")
+    commande_sql=("""SELECT NomProduit,Prix,CUP FROM ProduitsListe WHERE ClientID= ?""")
     curseur.execute(commande_sql,(IdClient,))
     resultat=curseur.fetchall()
-    for ligne in resultat:
-        #test= [tuple(s if type(s)!=int or s!="(" or s!=")" or s!="'" or s!="[" or s!="]"  else "" for s in tup) for tup in ligne]
-        ensembleresultats.append(ligne)
+    listeCaractereNonDesire=["[","]","(",")"]
+    y=0
+    x=0
+    while y<2:
+        print(x)
+        while (resultat.count(listeCaractereNonDesire[x])>0):
+            y=0
+            resultat.remove(listeCaractereNonDesire[x])
+            print(x)
+        x=x+1
+        y=y+1
+
+
     return (resultat)
 
 def ModifierClient(InfoClient,NouvellesInformations):
