@@ -92,6 +92,11 @@ addkid = PhotoImage(file='addkid3.png')
 look = PhotoImage(file='look.png')
 lookmini = PhotoImage(file='lookmini.png')
 enregistrer = PhotoImage(file='enregistrer2.png')
+AProfil = PhotoImage(file='AProfil.png')
+MProfil = PhotoImage(file='MProfil.png')
+ACoffre = PhotoImage(file='MCoffre.png')
+Retour = PhotoImage(file='Retour.png')
+Supprimer = PhotoImage(file='Supprimer.png')
 
 EnregistrementClient=[]
 
@@ -157,51 +162,51 @@ ListeCadeaux = Listbox(ProfilEnfant, width=50, bd=1, height=10, font='Arial 12')
 ProfilEnfantSelectionne=Listbox()
 
 Button(ResultatRecherche, image=photo, bg="LightCyan2", borderwidth=0, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
-Button(ResultatRecherche, text="Aller au profil", font='Arial 15', bg="Orange", fg="black", command=lambda:[ExecuterRechercheProduitClient(listeResultatRechercheEnfant,ListeCadeaux),raise_frame(ProfilEnfant)]).pack(side=BOTTOM)
+Button(ResultatRecherche, image=AProfil, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterRechercheProduitClient(listeResultatRechercheEnfant,ListeCadeaux),raise_frame(ProfilEnfant)]).pack(side=BOTTOM)
 
 
 
 #ProfilEnfant
-Label(ProfilEnfant, text="Profil Enfant", font='Arial 25 bold', bg="LightCyan2").pack(pady=22)
-Label(ProfilEnfant, textvariable=LabelNomProfil, bg="LightCyan2").pack()
-Label(ProfilEnfant, textvariable=LabelDateProfil, bg="LightCyan2").pack()
-Label(ProfilEnfant, textvariable=LabelAdresseProfil, bg="LightCyan2").pack()
+Label(ProfilEnfant, text="Profil Enfant", font='Arial 25 bold', bg="LightCyan2", fg='DarkSlateGray4').pack(pady=22)
+Label(ProfilEnfant, textvariable=LabelNomProfil, font='Arial 18 bold', bg="LightCyan2", fg='DarkSlateGray4').pack()
+Label(ProfilEnfant, textvariable=LabelDateProfil, font='Arial 18 bold', bg="LightCyan2", fg='DarkSlateGray4').pack()
+Label(ProfilEnfant, textvariable=LabelAdresseProfil, font='Arial 18 bold', bg="LightCyan2", fg='DarkSlateGray4').pack()
 
-Label(ProfilEnfant, text="Liste des cadeaux", font='Arial 15', bg="LightCyan2").pack()
+Label(ProfilEnfant, text="Liste des cadeaux", font='Arial 15', bg="LightCyan2", fg='DarkSlateGray4').pack()
 ListeCadeaux.pack()
 
-Button(ProfilEnfant, text="Modifier le profil", bg="Orange", fg="black", font='Arial 15',command=lambda:[ExecuterModificationsClient(ListeModifCadeaux),raise_frame(ModifProfil)]).pack(pady=5)
-Button(ProfilEnfant, text="Modifier le Coffre à jouet", bg="Yellow", fg="black", font='Arial 15', command=lambda:[ExecuterModificationsClient(ListeModifCadeaux),raise_frame(ModifListe)]).pack(pady=5)
+Button(ProfilEnfant, image=MProfil, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterModificationsClient(ListeModifCadeaux),raise_frame(ModifProfil)]).pack(pady=5)
+Button(ProfilEnfant, image=ACoffre, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterModificationsClient(ListeModifCadeaux),raise_frame(ModifListe)]).pack(pady=5)
 Button(ProfilEnfant, image=photo, bg="LightCyan2", borderwidth=0, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
 
 
 #ModifProfil
-Label(ModifProfil, text="Modifier le profil", font='Arial 25 bold', bg="LightCyan2").pack(pady=22)
-Label(ModifProfil, text="Nom", font='Arial 15', bg="LightCyan2").pack()
+Label(ModifProfil, text="Modifier le profil", font='Arial 25 bold', bg="LightCyan2", fg='DarkSlateGray4').pack(pady=22)
+Label(ModifProfil, text="Nom", font='Arial 15', bg="LightCyan2", fg='DarkSlateGray4').pack()
 var_nomEnfantModif = StringVar(value=LabelNomProfil.get())
 Entry(ModifProfil, textvariable=var_nomEnfantModif, width=30).pack(pady=5)
-Label(ModifProfil, text="Date", font='Arial 15', bg="LightCyan2").pack()
+Label(ModifProfil, text="Date", font='Arial 15', bg="LightCyan2", fg='DarkSlateGray4').pack()
 var_dateDeFeteModif = StringVar(value=LabelDateProfil.get())
 Entry(ModifProfil, textvariable=var_dateDeFeteModif, width=30).pack(pady=5)
-Label(ModifProfil, text="Adresse", font='Arial 15', bg="LightCyan2").pack()
+Label(ModifProfil, text="Adresse", font='Arial 15', bg="LightCyan2", fg='DarkSlateGray4').pack()
 var_adresseModif = StringVar(value=LabelAdresseProfil.get())
 Entry(ModifProfil, textvariable=var_adresseModif, width=30).pack(pady=5)
 
 
-Button(ModifProfil, text="Enregistrer", bg="Orange", fg="black", font='Arial 15', command=lambda:[ModifierProfilEnfant(var_nomEnfantModif.get(),var_dateDeFeteModif.get(),var_adresseModif.get(), ProfilEnfantSelectionne),raise_frame(Recherche)]).pack(pady=10)
+Button(ModifProfil, image=enregistrer, bg="LightCyan2", borderwidth=0, command=lambda:[ModifierProfilEnfant(var_nomEnfantModif.get(),var_dateDeFeteModif.get(),var_adresseModif.get(), ProfilEnfantSelectionne),raise_frame(Recherche)]).pack(pady=10)
 
-Button(ModifProfil, text="Retour", bg="Yellow", fg="black", font='Arial 15', command=lambda:[ExecuterModificationsClient(ListeCadeaux),raise_frame(ProfilEnfant)]).pack()
-
+Button(ModifProfil, image=Retour, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterModificationsClient(ListeCadeaux),raise_frame(ProfilEnfant)]).pack()
+Button(ModifProfil, image=photo, bg="LightCyan2",  borderwidth=0, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
 
 #ModifListe
-Label(ModifListe, text="Modifier la liste", font='Arial 25 bold', bg="LightCyan2").pack(pady=22)
+Label(ModifListe, text="Modifier la liste", font='Arial 25 bold', bg="LightCyan2", fg='DarkSlateGray4').pack(pady=22)
 ListeModifCadeaux = Listbox(ModifListe, width=50, bd=1, height=10, font='Arial 12')
 ListeModifCadeaux.pack()
 
 BindAdd = Entry(ModifListe, textvariable=var_editListeCadeaux)
 BindAdd.pack(pady=10)
-Button(ModifListe, text="Supprimer le cadeau sélectionné", bg="Orange", fg="black", font='Arial 15', command=EffacerCadeaux).pack(pady=10)
-Button(ModifListe, text="Retour", bg="Yellow", fg="black", font='Arial 15', command=lambda:[ExecuterModificationsClient(ListeCadeaux),raise_frame(ProfilEnfant)]).pack(pady=5)
+Button(ModifListe, image=Supprimer, bg="LightCyan2", borderwidth=0, command=EffacerCadeaux).pack(pady=10)
+Button(ModifListe, image=Retour, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterModificationsClient(ListeCadeaux),raise_frame(ProfilEnfant)]).pack(pady=5)
 BindAdd.focus_set()
 BindAdd.bind("<Return>",AddCadeaux)
 
@@ -225,7 +230,7 @@ helpmenu.add_command(label='About', command=lambda:raise_frame(AboutPage))
 
 #AboutPage
 Label(AboutPage, text="Crédit & Copyright By Alex Thibeault et Simon Lafortune", bg="LightCyan2").pack()
-Button(AboutPage, image=photo, bg="LightCyan2", command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
+Button(AboutPage, image=photo, bg="LightCyan2",  borderwidth=0, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
 
 
 raise_frame(StartPage)
