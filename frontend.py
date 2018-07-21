@@ -13,7 +13,7 @@ def popup(msg):
     popup.title("Erreur!")
     label = Label(popup, text=msg)
     label.pack(side="top", fill="x", pady=20, padx=20)
-    Button(popup, text="Ok", command=popup.destroy,takefocus=TRUE).pack()
+    Button(popup, text="Ok", command=popup.destroy, takefocus=TRUE).pack()
 
     popup.mainloop()
 
@@ -62,6 +62,7 @@ def ExecuterModificationsClient(Liste):
         Liste.insert(i, x)
         i=i+1
         Liste.pack()
+    BindAdd.focus_set()
 
 def ModifierProfilEnfant(Nom,Date,Adresse,Enregistrement):
     Modification=[Nom,Date,Adresse]
@@ -98,6 +99,7 @@ ACoffre = PhotoImage(file='MCoffre.png')
 Retour = PhotoImage(file='Retour.png')
 Supprimer = PhotoImage(file='Supprimer.png')
 
+
 EnregistrementClient=[]
 
 var_editListeCadeaux = StringVar()
@@ -121,19 +123,23 @@ Button(StartPage, image=look, bg="LightCyan2", borderwidth=0, command=lambda:rai
 Button(StartPage, image=photo, bg="LightCyan2", borderwidth=0, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
 
 #Ajouter
+
 Label(Ajouter, text='Ajouter un enfant', bg="LightCyan2", fg='DarkSlateGray4', font='Arial 25 bold').pack(pady=22)
 
 Label(Ajouter, text="Nom", bg="LightCyan2", fg='DarkSlateGray4', font='Arial 15').pack(pady=3)
 var_nomEnfant = StringVar()
-Entry(Ajouter, textvariable=var_nomEnfant, width=30).pack()
+entryNom = Entry(Ajouter, textvariable=var_nomEnfant, width=30).pack()
+
 
 Label(Ajouter, text="Date de fête", bg="LightCyan2", font='Arial 15', fg='DarkSlateGray4', justify='right').pack(pady=3)
 var_dateDeFete = StringVar()
-Entry(Ajouter, textvariable=var_dateDeFete, width=30).pack()
+entryDate = Entry(Ajouter, textvariable=var_dateDeFete, width=30).pack()
+
 
 Label(Ajouter, text="Adresse", bg="LightCyan2", fg='DarkSlateGray4', font='Arial 15').pack(pady=3)
 var_adresse = StringVar()
-Entry(Ajouter, textvariable=var_adresse, width=30).pack()
+entryAdresse = Entry(Ajouter, textvariable=var_adresse, width=30).pack()
+
 
 Button(Ajouter, image=enregistrer, bg="LightCyan2", borderwidth=0, command=AEnfant).pack(pady=50)
 Button(Ajouter, image=photo, bg="LightCyan2", borderwidth=0, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
@@ -148,7 +154,7 @@ listeResultatRechercheEnfant = Listbox(ResultatRecherche, width=50, bd=1, height
 LabelAdresseProfil=StringVar()
 LabelDateProfil=StringVar()
 LabelNomProfil=StringVar()
-Entry(Recherche, textvariable=var_nomEnfantRecherche, width=30).pack()
+rechercheEntry = Entry(Recherche, textvariable=var_nomEnfantRecherche, width=30).pack()
 Button(Recherche, image=lookmini, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterRechercheClient(var_nomEnfantRecherche.get(),listeResultatRechercheEnfant),raise_frame(ResultatRecherche)]).pack(pady=50)
 
 Button(Recherche, image=photo, bg="LightCyan2", borderwidth=0, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
@@ -156,7 +162,7 @@ Button(Recherche, image=photo, bg="LightCyan2", borderwidth=0, command=lambda:ra
 
 #ResultatRecherche
 
-Label(ResultatRecherche, text="Qui?", bg="LightCyan2", fg='DarkSlateGray4', font='Arial 25 bold').pack(pady=22)
+Label(ResultatRecherche, text="Quel enfant?", bg="LightCyan2", fg='DarkSlateGray4', font='Arial 25 bold').pack(pady=22)
 Label(ResultatRecherche, text="Résultat", bg="LightCyan2", fg='DarkSlateGray4', font='Arial 15').pack()
 ListeCadeaux = Listbox(ProfilEnfant, width=50, bd=1, height=10, font='Arial 12')
 ProfilEnfantSelectionne=Listbox()
@@ -168,11 +174,11 @@ Button(ResultatRecherche, image=AProfil, bg="LightCyan2", borderwidth=0, command
 
 #ProfilEnfant
 Label(ProfilEnfant, text="Profil Enfant", font='Arial 25 bold', bg="LightCyan2", fg='DarkSlateGray4').pack(pady=22)
-Label(ProfilEnfant, textvariable=LabelNomProfil, font='Arial 18 bold', bg="LightCyan2", fg='DarkSlateGray4').pack()
-Label(ProfilEnfant, textvariable=LabelDateProfil, font='Arial 18 bold', bg="LightCyan2", fg='DarkSlateGray4').pack()
-Label(ProfilEnfant, textvariable=LabelAdresseProfil, font='Arial 18 bold', bg="LightCyan2", fg='DarkSlateGray4').pack()
+Label(ProfilEnfant, textvariable=LabelNomProfil, font='Arial 15', bg="LightCyan2", fg='DarkSlateGray4').pack()
+Label(ProfilEnfant, textvariable=LabelDateProfil, font='Arial 15', bg="LightCyan2", fg='DarkSlateGray4').pack()
+Label(ProfilEnfant, textvariable=LabelAdresseProfil, font='Arial 15', bg="LightCyan2", fg='DarkSlateGray4').pack()
 
-Label(ProfilEnfant, text="Liste des cadeaux", font='Arial 15', bg="LightCyan2", fg='DarkSlateGray4').pack()
+Label(ProfilEnfant, text="Liste des cadeaux", font='Arial 13 bold', bg="LightCyan2", fg='DarkSlateGray4').pack()
 ListeCadeaux.pack()
 
 Button(ProfilEnfant, image=MProfil, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterModificationsClient(ListeModifCadeaux),raise_frame(ModifProfil)]).pack(pady=5)
@@ -205,10 +211,10 @@ ListeModifCadeaux.pack()
 
 BindAdd = Entry(ModifListe, textvariable=var_editListeCadeaux)
 BindAdd.pack(pady=10)
+BindAdd.focus_set()
 Button(ModifListe, image=Supprimer, bg="LightCyan2", borderwidth=0, command=EffacerCadeaux).pack(pady=10)
 Button(ModifListe, image=Retour, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterModificationsClient(ListeCadeaux),raise_frame(ProfilEnfant)]).pack(pady=5)
-BindAdd.focus_set()
-BindAdd.bind("<Return>",AddCadeaux)
+BindAdd.bind("<Return>", AddCadeaux)
 
 Button(ModifListe, image=photo, bg="LightCyan2", borderwidth=0, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
 
