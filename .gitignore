@@ -4,3 +4,5 @@ products-export-2018-07-14-03-48-51.csv
 *.png
 __pycache__/fonctions.cpython-37.pyc
 icone.ico
+__pycache__/fonctions.cpython-37.pyc
+*.pyc
