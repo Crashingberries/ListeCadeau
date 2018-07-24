@@ -12,15 +12,26 @@ def raise_frame(frame):
 def popup(msg):
     popup = Tk()
 
+    popup.configure(bg="LightCyan2")
     popup.title("Erreur!")
-    label = Label(popup, text=msg)
+    label = Label(popup, text=msg, bg="LightCyan2")
     label.pack(side="top", fill="x", pady=20, padx=20)
-    Button(popup, text="Ok", command=popup.destroy, takefocus=TRUE).pack()
+    Button(popup, text="Ok", command=popup.destroy, takefocus=TRUE, bg='salmon1').pack()
+
+    popup.mainloop()
+def goodpopup(msg):
+    popup = Tk()
+
+    popup.configure(bg="LightCyan2")
+    popup.title("Youpi!")
+    label = Label(popup, text=msg, bg="LightCyan2")
+    label.pack(side="top", fill="x", pady=20, padx=20)
+    Button(popup, text="Ok", command=popup.destroy, takefocus=TRUE, bg='salmon1').pack()
 
     popup.mainloop()
 
 class Enfant:
-    def __init__(self, nom="", adresse="", DateDeFete="",ID=""):
+    def __init__(self, nom="", adresse="", DateDeFete="", ID=""):
         self.Id=ID
         self.Nom = nom
         self.Adresse = adresse
@@ -73,19 +84,20 @@ def AEnfant():
         popup("La case adresse est vide")
     else:
         LabelIDProfil.set(fonctions.AjoutClient(Enfant(var_nomEnfant.get(), var_adresse.get(), var_dateDeFete.get())))
-        ExecuterRechercheProduitClient("",ListeCadeaux)
+        ExecuterRechercheProduitClient("", ListeCadeaux)
         raise_frame(ProfilEnfant)
         var_nomEnfant.set("")
         var_dateDeFete.set("")
         var_adresse.set("")
+        goodpopup("Client ajouté avec succès")
 
 def ExecuterRechercheClient(TermeRecherche,Liste):
         Liste.delete(0,END)
-        i=0
+        i = 0
         for x in fonctions.RechercheClient(TermeRecherche): #Nontype
-            temp=Enfant(x[0],x[1],x[2],x[3])
+            temp = Enfant(x[0],x[1],x[2],x[3])
             Liste.insert(i, temp)
-            i=i+1
+            i = i+1
         Liste.pack()
         var_nomEnfantRecherche.set("")
 
@@ -121,13 +133,13 @@ def ExecuterRechercheProduitClient(ListeDesEnfant,ListeDesCadeaux,ValeurAchete=0
 
 def ExecuterModificationsClient(Liste):
     Liste.delete(0,END)
-    i=0
+    i = 0
     for x in fonctions.RechercheListe(LabelIDProfil.get()):
         temp = Produit(x[2],x[0],x[1])
         temp.ModifierNom=(temp.Nom)
         temp.ModifierPrix=(temp.Prix)
         Liste.insert(i,temp)
-        i=i+1
+        i = i+1
     Liste.pack()
     BindAdd.focus_set()
 
@@ -151,18 +163,21 @@ def ChangerListeCadeau():
         if ListeCadeaux.curselection():
             Temp=ListeCadeaux.get(ACTIVE)
             print('ListeCadeau')
-            fonctions.ChangerListeCadeau(LabelIDProfil.get(),Temp[Temp.rfind(":")+1:len(Temp)],1)
+            fonctions.ChangerListeCadeau(LabelIDProfil.get(), Temp[Temp.rfind(":")+1:len(Temp)], 1)
         elif ListeCadeauxAcheter.curselection():
             Temp=ListeCadeauxAcheter.get(ACTIVE)
             print("ListeCadeauxAcheter")
-            fonctions.ChangerListeCadeau(LabelIDProfil.get(),Temp[Temp.rfind(":")+1:len(Temp)],0)
-        ExecuterRechercheProduitClient("",ListeCadeaux,0)
-        ExecuterRechercheProduitClient("",ListeCadeauxAcheter,1)
+            fonctions.ChangerListeCadeau(LabelIDProfil.get(), Temp[Temp.rfind(":")+1:len(Temp)], 0)
+        ExecuterRechercheProduitClient("", ListeCadeaux,0)
+        ExecuterRechercheProduitClient("", ListeCadeauxAcheter, 1)
 
 def EffacerCadeaux():
     Temp=ListeModifCadeaux.get(ACTIVE)
     fonctions.EffacerProduitListe(LabelIDProfil.get(),Temp[Temp.rfind(":")+1:len(Temp)])
     ExecuterModificationsClient(ListeModifCadeaux)
+
+def DeleteClient():
+        popup("Ce Client est maintenant suprimmé")
 
 
 root.title("Le Coffre à Jouets")
@@ -196,12 +211,14 @@ AboutPage = Frame(root, bg="LightCyan2")
 for frame in (StartPage, Ajouter, Recherche, ResultatRecherche, ProfilEnfant, ModifProfil, ModifListe, AboutPage):
     frame.grid(row=0, column=0, sticky='news')
 
+root.configure(bg="LightCyan2")
+root.geometry("800x700")
 
 #StartPage
 Label(StartPage, text="Accueil", bg="LightCyan2", fg='DarkSlateGray4', font='Arial 20 bold').pack(pady=22)
-Button(StartPage, image=addkid, bg="LightCyan2", borderwidth=0, command=lambda:raise_frame(Ajouter)).pack(pady=5)
-Button(StartPage, image=look, bg="LightCyan2", borderwidth=0, command=lambda:raise_frame(Recherche)).pack()
-Button(StartPage, image=photo, bg="LightCyan2", borderwidth=0, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
+Button(StartPage, image=addkid, bg="LightCyan2", borderwidth=0, command=lambda: raise_frame(Ajouter)).pack(pady=5)
+Button(StartPage, image=look, bg="LightCyan2", borderwidth=0, command=lambda: raise_frame(Recherche)).pack()
+Button(StartPage, image=photo, bg="LightCyan2", borderwidth=0, command=lambda: raise_frame(StartPage)).pack(side=BOTTOM, padx=100)
 
 
 #Ajouter
@@ -209,7 +226,8 @@ Label(Ajouter, text='Ajouter un enfant', bg="LightCyan2", fg='DarkSlateGray4', f
 
 Label(Ajouter, text="Nom", bg="LightCyan2", fg='DarkSlateGray4', font='Arial 15').pack(pady=3)
 var_nomEnfant = StringVar()
-entryNom = Entry(Ajouter, textvariable=var_nomEnfant, width=30).pack()
+entryNom = Entry(Ajouter, textvariable=var_nomEnfant, width=30)
+entryNom.pack()
 
 Label(Ajouter, text="Date de fête", bg="LightCyan2", font='Arial 15', fg='DarkSlateGray4', justify='right').pack(pady=3)
 var_dateDeFete = StringVar()
@@ -217,7 +235,10 @@ entryDate = Entry(Ajouter, textvariable=var_dateDeFete, width=30).pack()
 
 Label(Ajouter, text="Adresse", bg="LightCyan2", fg='DarkSlateGray4', font='Arial 15').pack(pady=3)
 var_adresse = StringVar()
-entryAdresse = Entry(Ajouter, textvariable=var_adresse, width=30).pack()
+entryAdresse = Entry(Ajouter, textvariable=var_adresse, width=30)
+entryAdresse.pack()
+
+entryAdresse.bind("<Return>", lambda ALEXTUSUCE: AEnfant())
 
 Button(Ajouter, image=enregistrer, bg="LightCyan2", borderwidth=0, command=AEnfant).pack(pady=50)
 Button(Ajouter, image=photo, bg="LightCyan2", borderwidth=0, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
@@ -233,20 +254,22 @@ LabelAdresseProfil=StringVar()
 LabelDateProfil=StringVar()
 LabelNomProfil=StringVar()
 LabelIDProfil=StringVar()
-rechercheEntry = Entry(Recherche, textvariable=var_nomEnfantRecherche, width=30).pack()
-Button(Recherche, image=lookmini, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterRechercheClient(var_nomEnfantRecherche.get(),listeResultatRechercheEnfant),raise_frame(ResultatRecherche)]).pack(pady=50)
+rechercheEntry = Entry(Recherche, textvariable=var_nomEnfantRecherche, width=30)
+rechercheEntry.pack()
+rechercheEntry.bind("<Return>", lambda ALEXTUSUCEENCRISS:[ExecuterRechercheClient(var_nomEnfantRecherche.get(),listeResultatRechercheEnfant), raise_frame(ResultatRecherche)])
 
+Test1 = Button(Recherche, image=lookmini, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterRechercheClient(var_nomEnfantRecherche.get(),listeResultatRechercheEnfant),raise_frame(ResultatRecherche)]).pack(pady=50)
 Button(Recherche, image=photo, bg="LightCyan2", borderwidth=0, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
 
 
 #ResultatRecherche
 Label(ResultatRecherche, text="Quel enfant?", bg="LightCyan2", fg='DarkSlateGray4', font='Arial 20 bold').pack(pady=22)
-Label(ResultatRecherche, text="Reusltat", bg="LightCyan2", fg='DarkSlateGray4', font='Arial 15').pack()
+Label(ResultatRecherche, text="Resultat", bg="LightCyan2", fg='DarkSlateGray4', font='Arial 15').pack()
 ListeCadeaux = Listbox(ProfilEnfant, width=75, bd=1, height=5, font='Arial 10', fg='DarkSlateGray4')
 ListeCadeauxAcheter = Listbox(ProfilEnfant, width=75, bd=1, height=5, font='Arial 10', fg='salmon1')
 
 Button(ResultatRecherche, image=photo, bg="LightCyan2", borderwidth=0, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
-Button(ResultatRecherche, image=AProfil, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterRechercheProduitClient(listeResultatRechercheEnfant,ListeCadeaux,0,ListeCadeauxAcheter),raise_frame(ProfilEnfant)]).pack(side=BOTTOM)
+Button(ResultatRecherche, image=AProfil, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterRechercheProduitClient(listeResultatRechercheEnfant,ListeCadeaux,0,ListeCadeauxAcheter),raise_frame(ProfilEnfant)]).pack(side=BOTTOM, pady=40)
 
 
 #ProfilEnfant
@@ -257,7 +280,7 @@ Label(ProfilEnfant, textvariable=LabelAdresseProfil, font='Arial 14', bg="LightC
 
 Label(ProfilEnfant, text="Liste des cadeaux", font='Arial 12', bg="LightCyan2", fg='DarkSlateGray4').pack()
 ListeCadeaux.pack()
-Button(ProfilEnfant, text="Déjà Acheté", bg="LightCyan2", fg='DarkSlateGray4', font='Arial 12', borderwidth=0, command=lambda:ChangerListeCadeau()).pack()
+Button(ProfilEnfant, text="Acheter", bg="LightCyan2", fg='DarkSlateGray4', font='Arial 12', borderwidth=0, command=lambda:ChangerListeCadeau()).pack()
 ListeCadeauxAcheter.pack()
 
 Button(ProfilEnfant, image=MProfil, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterModificationsClient(ListeModifCadeaux),raise_frame(ModifProfil)]).pack(pady=5)
@@ -278,8 +301,9 @@ var_adresseModif = StringVar(value=LabelAdresseProfil.get())
 Entry(ModifProfil, textvariable=var_adresseModif, width=30).pack(pady=5)
 
 Button(ModifProfil, image=enregistrer, bg="LightCyan2", borderwidth=0, command=lambda:[ModifierProfilEnfant(var_nomEnfantModif.get(),var_dateDeFeteModif.get(),var_adresseModif.get(), ProfilEnfantSelectionne),raise_frame(Recherche)]).pack(pady=10)
-Button(ModifProfil, image=Retour, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterModificationsClient(ListeCadeaux),raise_frame(ProfilEnfant)]).pack()
-Button(ModifProfil, image=photo, bg="LightCyan2",  borderwidth=0, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
+Button(ModifProfil, image=Supprimer, bg="LightCyan2", borderwidth=0, command=lambda: [DeleteClient(), raise_frame(StartPage)]).pack(pady=10)
+Button(ModifProfil, image=Retour, bg="LightCyan2", borderwidth=0, command=lambda: [ExecuterModificationsClient(ListeCadeaux),raise_frame(ProfilEnfant)]).pack()
+Button(ModifProfil, image=photo, bg="LightCyan2",  borderwidth=0, command=lambda: raise_frame(StartPage)).pack(side=BOTTOM)
 
 #ModifListe
 Label(ModifListe, text="Modifier la liste", font='Arial 20 bold', bg="LightCyan2", fg='DarkSlateGray4').pack(pady=22)
@@ -290,7 +314,7 @@ BindAdd = Entry(ModifListe, textvariable=var_editListeCadeaux)
 BindAdd.pack(pady=10)
 BindAdd.focus_set()
 Button(ModifListe, image=Supprimer, bg="LightCyan2", borderwidth=0, command=EffacerCadeaux).pack(pady=10)
-Button(ModifListe, image=Retour, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterModificationsClient(ListeCadeaux),raise_frame(ProfilEnfant)]).pack(pady=5)
+Button(ModifListe, image=Retour, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterModificationsClient(ListeCadeaux),raise_frame(ProfilEnfant)]).pack()
 BindAdd.bind("<Return>", AddCadeaux)
 
 Button(ModifListe, image=photo, bg="LightCyan2", borderwidth=0, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
