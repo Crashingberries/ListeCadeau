@@ -47,13 +47,13 @@ def AjoutClient(Enfant):
 
 def AjoutProduitListe(ClientID,Produit):
     produitAjout=[]
-    commande_sql= ("""SELECT FC_Title_Short FROM EnsembleProduit WHERE EAN = (?);""")
+    commande_sql= ("""SELECT Item FROM DBProduit WHERE UPC = (?);""")
     curseur.execute(commande_sql,(Produit.Cup,))
     produitAjout.append(curseur.fetchall())
     if(produitAjout[0]==[]):
         return "Le code de produit entrée est invalide!"
     else:
-        commande_sql= ("""SELECT Price FROM EnsembleProduit WHERE EAN = (?);""")
+        commande_sql= ("""SELECT Price FROM DBProduit WHERE UPC = (?);""")
         curseur.execute(commande_sql,(Produit.Cup,))
         produitAjout.append(curseur.fetchall())
         commande_sql ="""INSERT INTO ProduitsListe(ClientID,CUP,NomProduit,Prix,Achete)
@@ -74,7 +74,7 @@ def RechercheClient(NomClient):
 
 def RechercheListe(IdClient,Valeur=0):
     ensembleresultats=[]
-    commande_sql=("""SELECT NomProduit,Prix,CUP FROM ProduitsListe WHERE ClientID= ? AND Achete=?""")
+    commande_sql=("""SELECT NomProduit,Prix,CUP,EntreeNo FROM ProduitsListe WHERE ClientID= ? AND Achete=?""")
     curseur.execute(commande_sql,(IdClient,Valeur,))
     resultat=curseur.fetchall()
     return (resultat)

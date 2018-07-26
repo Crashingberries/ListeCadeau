@@ -12,6 +12,7 @@ def raise_frame(frame):
 def popup(msg):
     popup = Tk()
 
+    popup.focus_force()
     popup.configure(bg="LightCyan2")
     popup.title("Erreur!")
     label = Label(popup, text=msg, bg="LightCyan2")
@@ -19,16 +20,27 @@ def popup(msg):
     Button(popup, text="Ok", command=popup.destroy, takefocus=TRUE, bg='salmon1').pack()
 
     popup.mainloop()
+
 def goodpopup(msg):
-    popup = Tk()
+    if not len(var_dateDeFete.get()):
+        popup("La case nom de l'enfant est vide")
+    elif not len(var_dateDeFete.get()):
+        popup("La case date est vide")
+    elif not len(var_adresse.get()):
+        popup("La case adresse est vide")
+    else:
+        goodpopup = Tk()
 
-    popup.configure(bg="LightCyan2")
-    popup.title("Youpi!")
-    label = Label(popup, text=msg, bg="LightCyan2")
-    label.pack(side="top", fill="x", pady=20, padx=20)
-    Button(popup, text="Ok", command=popup.destroy, takefocus=TRUE, bg='salmon1').pack()
+        goodpopup.configure(bg="LightCyan2", )
+        goodpopup.focus_force()
+        goodpopup.title("Youpi!")
+        label = Label(goodpopup, text=msg, bg="LightCyan2")
+        label.pack(side="top", fill="x", pady=20, padx=20)
+        Button(goodpopup, text="Menu principal", command=lambda: [AEnfantMenu(), goodpopup.destroy()], takefocus=TRUE, bg='salmon1').pack()
+        Button(goodpopup, text="Ajouter un autre enfant", command=lambda: [AEnfantAdd(), goodpopup.destroy()], takefocus=TRUE, bg='salmon1').pack()
+        Button(goodpopup, text="Aller au profil", command=lambda: [AEnfant(), goodpopup.destroy()], takefocus=TRUE, bg='salmon1').pack()
 
-    popup.mainloop()
+        goodpopup.mainloop()
 
 class Enfant:
     def __init__(self, nom="", adresse="", DateDeFete="", ID=""):
@@ -37,28 +49,29 @@ class Enfant:
         self.Adresse = adresse
         self.DateDeFete = DateDeFete
     def __str__ (self) :
-        return f'{self.Id}: {self.Nom}, fêté le {self.DateDeFete} au {self.Adresse}'
+        return f'{self.Nom}, fêté le {self.DateDeFete} au {self.Adresse}'
 
     def copie(LaSelection):
         self.Nom=LaSelection.Nom
         self.Adresse=LaSelection.Adresse
         self.DateDeFete=LaSelection.DateDeFete
-        print(self)
+        (self)
 
 class Produit:
-    def __init__(self, cup, Nom="", Prix="0"):
+    def __init__(self, cup, Nom="", Prix="0",IdUnique="0"):
+        self.IdUnique=IdUnique
         self.Cup = cup
         self.Nom = Nom
         self.Prix = Prix
     def __str__ (self) :
-        return f'{self.Nom}, {self.Prix}$ Code Produit:{self.Cup}'
+        return f'{self.Nom}, {self.Prix} Code Produit:{self.Cup}'
 
     def ModifierNom(self,StringsAcorriger):
         y=0
         x=["[","]","(",")","{","}","'",",","END"]
         while x[y]!="END":
             while (StringsAcorriger.count(x[y]))!=0:
-                print(StringsAcorriger)
+                (StringsAcorriger)
                 StringsAcorriger=StringsAcorriger.replace(x[y],"")
                 print(StringsAcorriger)
             y+=1
@@ -76,20 +89,28 @@ class Produit:
         self.Prix=StringsAcorriger
 
 def AEnfant():
-    if not len(var_dateDeFete.get()):
-        popup("La case nom de l'enfant est vide")
-    elif not len(var_dateDeFete.get()):
-        popup("La case date est vide")
-    elif not len(var_adresse.get()):
-        popup("La case adresse est vide")
-    else:
         LabelIDProfil.set(fonctions.AjoutClient(Enfant(var_nomEnfant.get(), var_adresse.get(), var_dateDeFete.get())))
         ExecuterRechercheProduitClient("", ListeCadeaux)
         raise_frame(ProfilEnfant)
         var_nomEnfant.set("")
         var_dateDeFete.set("")
         var_adresse.set("")
-        goodpopup("Client ajouté avec succès")
+
+def AEnfantMenu():
+        LabelIDProfil.set(fonctions.AjoutClient(Enfant(var_nomEnfant.get(), var_adresse.get(), var_dateDeFete.get())))
+        ExecuterRechercheProduitClient("", ListeCadeaux)
+        raise_frame(StartPage)
+        var_nomEnfant.set("")
+        var_dateDeFete.set("")
+        var_adresse.set("")
+
+def AEnfantAdd():
+        LabelIDProfil.set(fonctions.AjoutClient(Enfant(var_nomEnfant.get(), var_adresse.get(), var_dateDeFete.get())))
+        ExecuterRechercheProduitClient("", ListeCadeaux)
+        raise_frame(Ajouter)
+        var_nomEnfant.set("")
+        var_dateDeFete.set("")
+        var_adresse.set("")
 
 def ExecuterRechercheClient(TermeRecherche,Liste):
         Liste.delete(0,END)
@@ -116,14 +137,14 @@ def ExecuterRechercheProduitClient(ListeDesEnfant,ListeDesCadeaux,ValeurAchete=0
         if ListeAdditionnelle!="":
             ListeAdditionnelle.delete(0, END)
             for x in fonctions.RechercheListe(EnregistrementClient.Id,1):
-                temp = Produit(x[2],x[0],x[1])
+                temp = Produit(x[2],x[0],x[1],x[3])
                 temp.ModifierNom=(temp.Nom)
                 temp.ModifierPrix=(temp.Prix)
                 ListeAdditionnelle.insert(i,temp)
                 i=i+1
             ListeAdditionnelle.pack()
         for x in fonctions.RechercheListe(EnregistrementClient.Id,ValeurAchete):
-            temp = Produit(x[2],x[0],x[1])
+            temp = Produit(x[2],x[0],x[1],x[3])
             temp.ModifierNom=(temp.Nom)
             temp.ModifierPrix=(temp.Prix)
             ListeDesCadeaux.insert(i,temp)
@@ -152,12 +173,13 @@ def ModifierProfilEnfant(Nom,Date,Adresse,Enregistrement):
 
 
 def AddCadeaux(Liste):
-    Message=fonctions.AjoutProduitListe(LabelIDProfil.get(), Produit(var_editListeCadeaux.get()))
-    if Message==None:
-        ExecuterModificationsClient(ListeModifCadeaux)
-        BindAdd.delete(0, END)
-    else:
-        popup(Message)
+    if var_editListeCadeaux.get().strip()!="":
+        Message=fonctions.AjoutProduitListe(LabelIDProfil.get(), Produit(var_editListeCadeaux.get()))
+        if Message==None:
+            ExecuterModificationsClient(ListeModifCadeaux)
+            BindAdd.delete(0, END)
+        else:
+            popup(Message)
 
 def ChangerListeCadeau():
         if ListeCadeaux.curselection():
@@ -216,7 +238,7 @@ root.geometry("800x700")
 
 #StartPage
 Label(StartPage, text="Accueil", bg="LightCyan2", fg='DarkSlateGray4', font='Arial 20 bold').pack(pady=22)
-Button(StartPage, image=addkid, bg="LightCyan2", borderwidth=0, command=lambda: raise_frame(Ajouter)).pack(pady=5)
+Button(StartPage, image=addkid, bg="LightCyan2", borderwidth=0, command=lambda: raise_frame(Ajouter)).pack()
 Button(StartPage, image=look, bg="LightCyan2", borderwidth=0, command=lambda: raise_frame(Recherche)).pack()
 Button(StartPage, image=photo, bg="LightCyan2", borderwidth=0, command=lambda: raise_frame(StartPage)).pack(side=BOTTOM, padx=100)
 
@@ -238,9 +260,9 @@ var_adresse = StringVar()
 entryAdresse = Entry(Ajouter, textvariable=var_adresse, width=30)
 entryAdresse.pack()
 
-entryAdresse.bind("<Return>", lambda ALEXTUSUCE: AEnfant())
+entryAdresse.bind("<Return>", lambda x: goodpopup("Client ajouté avec succès"))
 
-Button(Ajouter, image=enregistrer, bg="LightCyan2", borderwidth=0, command=AEnfant).pack(pady=50)
+EnregistrerAdd = Button(Ajouter, image=enregistrer, bg="LightCyan2", borderwidth=0, command=lambda: goodpopup("Client ajouté avec succès")).pack(pady=50)
 Button(Ajouter, image=photo, bg="LightCyan2", borderwidth=0, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
 
 
