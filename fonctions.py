@@ -74,7 +74,7 @@ def RechercheClient(NomClient):
 
 def RechercheListe(IdClient,Valeur=0):
     ensembleresultats=[]
-    commande_sql=("""SELECT NomProduit,Prix,CUP,EntreeNo FROM ProduitsListe WHERE ClientID= ? AND Achete=?""")
+    commande_sql=("""SELECT NomProduit,Prix,CUP FROM ProduitsListe WHERE ClientID= ? AND Achete=?""")
     curseur.execute(commande_sql,(IdClient,Valeur,))
     resultat=curseur.fetchall()
     return (resultat)
@@ -85,7 +85,7 @@ def ModifierClient(InfoClient,NouvellesInformations):
     connexionDB.commit()
 
 def EffacerProduitListe(IdClient,CupProduitAEffacer):
-    commande_sql=("""DELETE FROM ProduitsListe WHERE ClientID= ? AND CUP=? AND Achete=0""")
+    commande_sql=("""DELETE FROM ProduitsListe WHERE Achete=0 AND EntreeNo=(SELECT EntreeNo FROM ProduitsListe WHERE ClientID= ? AND CUP=? LIMIT 1)""")
     curseur.execute(commande_sql,(IdClient,CupProduitAEffacer,))
     connexionDB.commit()
 
@@ -102,8 +102,15 @@ def InfoClient(Client):
     return Client
 
 def ChangerListeCadeau(IdClient,CupProduitAChanger,Valeur):
-    commande_sql=("""UPDATE ProduitsListe SET Achete=? WHERE ClientID= ? AND CUP=? """)
-    curseur.execute(commande_sql,(Valeur,IdClient,CupProduitAChanger,))
+    commande_sql=("""UPDATE ProduitsListe SET  Achete=? WHERE EntreeNo= (SELECT EntreeNo FROM ProduitsListe WHERE ClientID= ? AND CUP=?  AND Achete!=? LIMIT 1)""")
+    curseur.execute(commande_sql,(Valeur,IdClient,CupProduitAChanger,Valeur,))
+    connexionDB.commit()
+
+def SupprimerClientDB(IdClient):
+    commande_sql=("""DELETE FROM Clients  WHERE ID=? """)
+    curseur.execute(commande_sql,(IdClient,))
+    commande_sql=("""DELETE FROM ProduitsListe  WHERE ClientID=? """)
+    curseur.execute(commande_sql,(IdClient,))
     connexionDB.commit()
 
 
