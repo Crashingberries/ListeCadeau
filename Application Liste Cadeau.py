@@ -1,5 +1,5 @@
 from tkinter import *
-import fonctions
+from bin import fonctions
 import time
 import datetime
 
@@ -53,6 +53,31 @@ class Enfant:
         self.Adresse=LaSelection.Adresse
         self.DateDeFete=LaSelection.DateDeFete
         (self)
+    def ModifierNom(self,StringsAcorriger):
+        y=0
+        x=["[","]","(",")","{","}","'",",","END"]
+        while x[y]!="END":
+            while (StringsAcorriger.count(x[y]))!=0:
+                (StringsAcorriger)
+                StringsAcorriger=StringsAcorriger.replace(x[y],"")
+            y+=1
+        self.Nom=StringsAcorriger
+    def ModifierAdresse(self,StringsAcorriger):
+        y=0
+        x=["[","]","(",")","{","}","'",",","END"]
+        while x[y]!="END":
+            while (StringsAcorriger.count(x[y]))!=0:
+                StringsAcorriger=StringsAcorriger.replace(x[y],"")
+            y+=1
+        self.Adresse=StringsAcorriger
+    def ModifierDateDeFete(self,StringsAcorriger):
+        y=0
+        x=["[","]","(",")","{","}","'",",","END"]
+        while x[y]!="END":
+            while (StringsAcorriger.count(x[y]))!=0:
+                StringsAcorriger=StringsAcorriger.replace(x[y],"")
+            y+=1
+        self.DateDeFete=StringsAcorriger
 
 class Produit:
     def __init__(self, cup, Nom="", Prix="0"):
@@ -69,7 +94,6 @@ class Produit:
             while (StringsAcorriger.count(x[y]))!=0:
                 (StringsAcorriger)
                 StringsAcorriger=StringsAcorriger.replace(x[y],"")
-                print(StringsAcorriger)
             y+=1
         self.Nom=StringsAcorriger
 
@@ -78,9 +102,7 @@ class Produit:
         x=["[","]","(",")","{","}","'",",","END"]
         while x[y]!="END":
             while (StringsAcorriger.count(x[y]))!=0:
-                print(StringsAcorriger)
                 StringsAcorriger=StringsAcorriger.replace(x[y],"")
-                print(StringsAcorriger)
             y+=1
         self.Prix=StringsAcorriger
 
@@ -100,6 +122,7 @@ def ExecuterRechercheClient(TermeRecherche,Liste):
             i = i+1
         Liste.pack()
         var_nomEnfantRecherche.set("")
+        ActualiserLabelProfil()
 
 def ExecuterRechercheProduitClient(ListeDesEnfant,ListeDesCadeaux,ValeurAchete=0,ListeAdditionnelle=""):
         ListeDesCadeaux.delete(0, END)
@@ -129,6 +152,7 @@ def ExecuterRechercheProduitClient(ListeDesEnfant,ListeDesCadeaux,ValeurAchete=0
             ListeDesCadeaux.insert(i,temp)
             i=i+1
         ListeDesCadeaux.pack()
+        ActualiserLabelProfil()
 
 
 def ExecuterModificationsClient(Liste):
@@ -142,13 +166,41 @@ def ExecuterModificationsClient(Liste):
         i = i+1
     Liste.pack()
     BindAdd.focus_set()
+    ActualiserLabelProfil()
 
-def ModifierProfilEnfant(Nom,Date,Adresse,Enregistrement):
-    Modification=[Nom,Date,Adresse]
-    fonctions.ModifierClient(Enregistrement.get(0,END), Modification)
-    LabelNomProfil.set(Modification[0])
-    LabelDateProfil.set(Modification[1])
-    LabelAdresseProfil.set(Modification[2])
+def ActualiserModifProfil():
+    ClientTemp=Enfant()
+    ClientTemp.ModifierNom(LabelNomProfil.get())
+    ClientTemp.ModifierAdresse(LabelAdresseProfil.get())
+    ClientTemp.ModifierDateDeFete(LabelDateProfil.get())
+    var_nomEnfantModif.set(ClientTemp.Nom)
+    var_dateDeFeteModif.set(ClientTemp.DateDeFete)
+    var_adresseModif.set(ClientTemp.Adresse)
+    raise_frame(ModifProfil)
+
+def ActualiserLabelProfil():
+    ClientTemp=Enfant()
+    ClientTemp.ModifierNom(LabelNomProfil.get())
+    ClientTemp.ModifierAdresse(LabelAdresseProfil.get())
+    ClientTemp.ModifierDateDeFete(LabelDateProfil.get())
+    LabelNomProfil.set(ClientTemp.Nom)
+    LabelDateProfil.set(ClientTemp.DateDeFete)
+    LabelAdresseProfil.set(ClientTemp.Adresse)
+
+def ModifierProfilEnfant(Nom,Date,Adresse):
+    if not len(Nom.strip()):
+        popup("La case nom de l'enfant est vide")
+    elif not len(Date.strip()):
+        popup("La case date est vide")
+    elif not len(Adresse.strip()):
+        popup("La case adresse est vide")
+    else:
+        fonctions.ModifierClient(LabelIDProfil.get(),Enfant(Nom,Adresse,Date))
+        LabelNomProfil.set(Nom)
+        LabelDateProfil.set(Date)
+        LabelAdresseProfil.set(Adresse)
+        raise_frame(ProfilEnfant)
+        popup("Modifications apportées avec succès!")
 
 
 def AddCadeaux(Liste):
@@ -288,24 +340,24 @@ ListeCadeaux.pack()
 Button(ProfilEnfant, text="Acheter", bg="LightCyan2", fg='DarkSlateGray4', font='Arial 12', borderwidth=0, command=lambda:ChangerListeCadeau()).pack()
 ListeCadeauxAcheter.pack()
 
-Button(ProfilEnfant, image=MProfil, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterModificationsClient(ListeModifCadeaux),raise_frame(ModifProfil)]).pack(pady=5)
+Button(ProfilEnfant, image=MProfil, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterModificationsClient(ListeModifCadeaux),ActualiserModifProfil()]).pack(pady=5)
 Button(ProfilEnfant, image=ACoffre, bg="LightCyan2", borderwidth=0, command=lambda:[ExecuterModificationsClient(ListeModifCadeaux),raise_frame(ModifListe)]).pack(pady=5)
 Button(ProfilEnfant, image=photo, bg="LightCyan2", borderwidth=0, command=lambda:raise_frame(StartPage)).pack(side=BOTTOM)
 
 
 #ModifProfil
+var_nomEnfantModif = StringVar()
+var_dateDeFeteModif = StringVar()
+var_adresseModif = StringVar()
 Label(ModifProfil, text="Modifier le profil", font='Arial 20 bold', bg="LightCyan2", fg='DarkSlateGray4').pack(pady=22)
 Label(ModifProfil, text="Nom", font='Arial 15', bg="LightCyan2", fg='DarkSlateGray4').pack()
-var_nomEnfantModif = StringVar(value=LabelNomProfil.get())
 Entry(ModifProfil, textvariable=var_nomEnfantModif, width=30).pack(pady=5)
 Label(ModifProfil, text="Date", font='Arial 15', bg="LightCyan2", fg='DarkSlateGray4').pack()
-var_dateDeFeteModif = StringVar(value=LabelDateProfil.get())
 Entry(ModifProfil, textvariable=var_dateDeFeteModif, width=30).pack(pady=5)
 Label(ModifProfil, text="Adresse", font='Arial 15', bg="LightCyan2", fg='DarkSlateGray4').pack()
-var_adresseModif = StringVar(value=LabelAdresseProfil.get())
 Entry(ModifProfil, textvariable=var_adresseModif, width=30).pack(pady=5)
 
-Button(ModifProfil, image=enregistrer, bg="LightCyan2", borderwidth=0, command=lambda:[ModifierProfilEnfant(var_nomEnfantModif.get(),var_dateDeFeteModif.get(),var_adresseModif.get(), ProfilEnfantSelectionne),raise_frame(Recherche)]).pack(pady=10)
+Button(ModifProfil, image=enregistrer, bg="LightCyan2", borderwidth=0, command=lambda:[ModifierProfilEnfant(var_nomEnfantModif.get(),var_dateDeFeteModif.get(),var_adresseModif.get())]).pack(pady=10)
 Button(ModifProfil, image=Supprimer, bg="LightCyan2", borderwidth=0, command=lambda: [SupprimerClient()]).pack(pady=10)
 Button(ModifProfil, image=Retour, bg="LightCyan2", borderwidth=0, command=lambda: [ExecuterModificationsClient(ListeCadeaux),raise_frame(ProfilEnfant)]).pack()
 Button(ModifProfil, image=photo, bg="LightCyan2",  borderwidth=0, command=lambda: raise_frame(StartPage)).pack(side=BOTTOM)

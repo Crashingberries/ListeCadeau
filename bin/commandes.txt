@@ -1,0 +1,3 @@
+DROP TABLE DBProduit;
+.mode csv
+.import item_listings_local_matches.csv DBProduit

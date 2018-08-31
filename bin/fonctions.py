@@ -1,3 +1,10 @@
+"""
+Version 1.0
+Alex Thibeault
+
+Ce fichier regroupe l'ensembles des fonctions qui communique avec la base de données.
+"""
+
 import sqlite3
 from tkinter import *
 
@@ -5,6 +12,9 @@ connexionDB = sqlite3.connect('ListeCadeau.db')
 curseur = connexionDB.cursor()
 
 def CreationTableClient():
+#Sert à Créer la table Client en cas de première ouverture du programme. Si la
+#table existe déjà, la fonction évite d'écraser la table présente.
+
     commande_sql = """CREATE TABLE Clients (
     ID INTEGER PRIMARY KEY AUTOINCREMENT,
     Nom VARCHAR(40),
@@ -17,6 +27,8 @@ def CreationTableClient():
         pass
 
 def CreationTableProduitListe():
+#Même concept que CreationTableClient mais pour la Table ProduitListe
+
     commande_sql = """CREATE TABLE `ProduitsListe` (
 	`EntreeNo`	INTEGER NOT NULL,
 	`ClientID`	INTEGER NOT NULL,
@@ -30,9 +42,26 @@ def CreationTableProduitListe():
     try:
         curseur.execute(commande_sql)
     except sqlite3.OperationalError:
-      pass
+        pass
+
+def CreationTableDBProduit():
+#Même concept que CreationTableClient mais pour la Table DBProduit
+
+    commande_sql= """CREATE TABLE `DBProduit` (
+	`TEMP`	INTEGER NOT NULL);"""
+    try:
+        curseur.execute(commande_sql)
+    except sqlite3.OperationalError:
+        pass
+
 
 def AjoutClient(Enfant):
+#Permet d'ajouter un Client dans la base de données.
+
+#Paramètres:
+#Enfant: Un objet de type 'Enfant' regroupant les informations necessaire pour
+#        ajouter un Client à la base de données.
+
     commande_sql ="""INSERT INTO Clients(Nom,Adresse,DateDeFete)
     VALUES (?,?,?);"""
     client= (Enfant.Nom,Enfant.Adresse,Enfant.DateDeFete)
@@ -46,6 +75,16 @@ def AjoutClient(Enfant):
     return temp
 
 def AjoutProduitListe(ClientID,Produit):
+#Permet d'ajouter un produit dans la table ProduitListe. Cette Table regroupe
+#l'entièreté des produits reliés à un compte client.
+
+#Paramètres:
+#ClientID: Le ID unique d'un client. C'est ce qui permet de faire la différence
+#          entre un compte et un autre.
+#Produit: Un objet de type 'Produit' qui regroupe toutes les informations du
+#         produit à ajouter.
+
+
     produitAjout=[]
     commande_sql= ("""SELECT Item FROM DBProduit WHERE UPC = (?);""")
     curseur.execute(commande_sql,(Produit.Cup,))
@@ -79,9 +118,12 @@ def RechercheListe(IdClient,Valeur=0):
     resultat=curseur.fetchall()
     return (resultat)
 
-def ModifierClient(InfoClient,NouvellesInformations):
+def ModifierClient(IdClient,Enfant):
     commande_sql=("""UPDATE Clients SET Nom=?,Adresse=?,DateDeFete=? WHERE ID= ?""")
-    curseur.execute(commande_sql,(NouvellesInformations[0],NouvellesInformations[1],NouvellesInformations[2],InfoClient[0],))
+    Enfant.ModifierNom(Enfant.Nom)
+    Enfant.ModifierAdresse(Enfant.Adresse)
+    Enfant.ModifierDateDeFete(Enfant.DateDeFete)
+    curseur.execute(commande_sql,(Enfant.Nom,Enfant.Adresse,Enfant.DateDeFete,IdClient,))
     connexionDB.commit()
 
 def EffacerProduitListe(IdClient,CupProduitAEffacer):
@@ -117,3 +159,4 @@ def SupprimerClientDB(IdClient):
 
 CreationTableClient()
 CreationTableProduitListe()
+CreationTableDBProduit()
